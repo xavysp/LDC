@@ -14,10 +14,10 @@ from torch.utils.data import DataLoader
 from dataset import DATASET_NAMES, BipedDataset, TestDataset, dataset_info
 # from loss import *
 from loss2 import *
-# from model import LDC
+from model import LDC
 # from modelB4 import LDC
 # from modelB3 import LDC
-from modelB2 import LDC
+# from modelB2 import LDC
 # from model6 import LDC
 from utils.img_processing import (image_normalization, save_image_batch_to_disk,
                    visualize_result, count_parameters)
@@ -283,16 +283,16 @@ def parse_args():
                         help='Result directory')
     parser.add_argument('--log_interval_vis',
                         type=int,
-                        default=50,
+                        default=100,
                         help='The NO B to wait before printing test predictions. 200')
 
     parser.add_argument('--epochs',
                         type=int,
-                        default=31,
+                        default=25,
                         metavar='N',
                         help='Number of training epochs (default: 25).')
     parser.add_argument('--lr',
-                        default=5e-5,
+                        default=25e-5,
                         type=float,
                         help='Initial learning rate. =5e-5')
     parser.add_argument('--wd',
@@ -305,7 +305,7 @@ def parse_args():
                         type=int,
                         help='Learning rate step size.')  # [6,9,19]
     parser.add_argument('--version_notes',
-                        default=' CAST loss2.py BSDS cut_size process set LR> dec. from LR [25e-4, 5e-6]  Co-fision',
+                        default=' Exp 4 CAST loss2.py BSDS cut_size process LR> dec. from LR [25e-4, 5e-6]  Co-fision',
                         type=str,
                         help='version notes')
     parser.add_argument('--batch_size',
