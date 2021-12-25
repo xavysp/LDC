@@ -215,7 +215,7 @@ def parse_args():
     TEST_DATA = DATASET_NAMES[parser.parse_args().choose_test_data] # max 8
     test_inf = dataset_info(TEST_DATA, is_linux=IS_LINUX)
     test_dir = test_inf['data_dir']
-    is_testing =False# current test _bdcnlossNew256-sd7-1.10.4p5
+    is_testing =True# current test _bdcnlossNew256-sd7-1.10.4p5
 
     # Training settings
     TRAIN_DATA = DATASET_NAMES[0] # BIPED=0
@@ -292,7 +292,7 @@ def parse_args():
                         metavar='N',
                         help='Number of training epochs (default: 25).')
     parser.add_argument('--lr',
-                        default=25e-5,
+                        default=5e-5,
                         type=float,
                         help='Initial learning rate. =5e-5')
     parser.add_argument('--wd',
@@ -336,8 +336,9 @@ def parse_args():
                         type=bool,
                         help='If true crop training images, else resize images to match image width and height.')
     parser.add_argument('--mean_pixel_values',
-                        default=[103.939,116.779,123.68, 137.86],
-                        type=float)  # [103.939,116.779,123.68] [104.00699, 116.66877, 122.67892]
+                        default=[97.939,119.779,124.68, 137.86],
+                        type=float)  # BIPED/MDBD [103.939,116.779,123.68,137.86] [104.00699, 116.66877, 122.67892]
+    # test on other datasts>  [92.939,119.779,124.68, 137.86]
     args = parser.parse_args()
     return args
 

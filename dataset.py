@@ -31,7 +31,6 @@ def dataset_info(dataset_name, is_linux=True):
                 'train_list': 'train_pair.lst',
                 'test_list': 'test_pair.lst',
                 'data_dir': '/opt/dataset/BSDS',  # mean_rgb
-                'mean_rgb': [104.00699, 116.66877, 122.67892,137.86],
                 'yita': 0.5
             },
             'BRIND': {
@@ -40,7 +39,6 @@ def dataset_info(dataset_name, is_linux=True):
                 'train_list': 'train_pair1.lst',
                 'test_list': 'test_pair.lst',
                 'data_dir': '/opt/dataset/BRIND',  # mean_rgb
-                'mean_rgb': [104.00699, 116.66877, 122.67892, 137.86],
                 'yita': 0.5
             },
             'BSDS300': {
@@ -81,7 +79,6 @@ def dataset_info(dataset_name, is_linux=True):
                 'test_list': 'test_pair.lst',
                 'train_list': 'train_pair.lst',
                 'data_dir': '/opt/dataset/MDBD',  # mean_rgb
-                'mean_rgb': [103.939, 116.779, 123.68, 137.86],
                 'yita': 0.3
             },
             'BIPED': {
@@ -90,7 +87,6 @@ def dataset_info(dataset_name, is_linux=True):
                 'test_list': 'test_pair.lst',
                 'train_list': 'train_rgb.lst',
                 'data_dir': '/opt/dataset/BIPED',  # mean_rgb
-                'mean_rgb': [103.939, 116.779, 123.68, 137.86],
                 'yita': 0.5
             },
             'CLASSIC': {
@@ -116,7 +112,6 @@ def dataset_info(dataset_name, is_linux=True):
                      'img_width': 480,  # 481
                      'test_list': 'test_pair.lst',
                      'data_dir': 'C:/Users/xavysp/dataset/BSDS',  # mean_rgb
-                     'mean_rgb':[104.00699, 116.66877, 122.67892,122.69],
                      'yita': 0.5},
             'BSDS300': {'img_height': 512,  # 321
                         'img_width': 512,  # 481
@@ -143,14 +138,12 @@ def dataset_info(dataset_name, is_linux=True):
                          'test_list': 'test_pair.lst',
                          'train_list': 'train_pair.lst',
                          'data_dir': 'C:/Users/xavysp/dataset/MDBD',  # mean_rgb
-                          'mean_rgb': [103.939, 116.779, 123.68, 137.86],
                          'yita': 0.3},
             'BIPED': {'img_height': 720,  # 720
                       'img_width': 1280,  # 1280
                       'test_list': 'test_pair.lst',
                       'train_list': 'train_rgb.lst',
                       'data_dir': 'C:/Users/xavysp/dataset/BIPED',  # WIN: '../.../dataset/BIPED/edges'
-                      'mean_rgb': [103.939,116.779,123.68, 137.86],
                       'yita': 0.5},
             'CLASSIC': {'img_height': 512,
                         'img_width': 512,
@@ -472,12 +465,12 @@ class BipedDataset(Dataset):
         # BSDS
         # gt[gt>0.28]=1. # BSDS/MDBD
         # gt[gt<=0.28]=0. # BSDS/MDBD
-        # # for BIPED / BRIND
-        # gt[gt > 0.2] += 0.6# 0.5 for BIPED/BSDS-RIND
-        # gt = np.clip(gt, 0., 1.) # BIPED/BSDS-RIND
-        # for MDBD
-        gt[gt > 0.1] +=0.2#0.4
-        gt = np.clip(gt, 0., 1.)
+        # for BIPED / BRIND
+        gt[gt > 0.2] += 0.6# 0.5 for BIPED/BSDS-RIND
+        gt = np.clip(gt, 0., 1.) # BIPED/BSDS-RIND
+        # # for MDBD
+        # gt[gt > 0.1] +=0.2#0.4
+        # gt = np.clip(gt, 0., 1.)
         # # -----------------------------------
         # gt[gt==0]=0.
         # gt[np.logical_and(gt>0.,gt<0.5)] = 2.
