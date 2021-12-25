@@ -336,9 +336,9 @@ def parse_args():
                         type=bool,
                         help='If true crop training images, else resize images to match image width and height.')
     parser.add_argument('--mean_pixel_values',
-                        default=[97.939,119.779,124.68, 137.86],
+                        default=[96.939,117.779,119.68, 137.86],
                         type=float)  # BIPED/MDBD [103.939,116.779,123.68,137.86] [104.00699, 116.66877, 122.67892]
-    # test on other datasts>  [92.939,119.779,124.68, 137.86]
+    # test on other datasts>  [96.939,117.779,119.68, 137.86]
     args = parser.parse_args()
     return args
 
