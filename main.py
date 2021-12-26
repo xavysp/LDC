@@ -207,7 +207,7 @@ def parse_args():
     parser = argparse.ArgumentParser(description='DexiNed trainer.')
     parser.add_argument('--choose_test_data',
                         type=int,
-                        default=-1,
+                        default=1,
                         help='Already set the dataset for testing choice: 0 - 8')
     # ----------- test -------0--
 
@@ -291,23 +291,17 @@ def parse_args():
                         default=25,
                         metavar='N',
                         help='Number of training epochs (default: 25).')
-    parser.add_argument('--lr',
-                        default=5e-5,
-                        type=float,
+    parser.add_argument('--lr', default=3e-5, type=float,
                         help='Initial learning rate. =5e-5')
-    parser.add_argument('--wd',
-                        type=float,
-                        default=5e-6,
-                        metavar='WD',
+    parser.add_argument('--lrs', default=[25e-4, 5e-6], type=float,
+                        help='LR for set epochs')
+    parser.add_argument('--wd', type=float, default=5e-6, metavar='WD',
                         help='weight decay (Good 5e-6)')
-    parser.add_argument('--adjust_lr',
-                        default=[8,14],
-                        type=int,
+    parser.add_argument('--adjust_lr', default=[8, 14], type=int,
                         help='Learning rate step size.')  # [6,9,19]
     parser.add_argument('--version_notes',
-                        default=' Exp 4 CAST loss2.py BSDS cut_size process LR> dec. from LR [25e-4, 5e-6]  Co-fision',
-                        type=str,
-                        help='version notes')
+                        default=' Exp 10 CAST loss2.py BSDS cut_size process LR> dec. Co-fision',
+                        type=str, help='version notes')
     parser.add_argument('--batch_size',
                         type=int,
                         default=8,
