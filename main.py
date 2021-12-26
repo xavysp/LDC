@@ -207,7 +207,7 @@ def parse_args():
     parser = argparse.ArgumentParser(description='DexiNed trainer.')
     parser.add_argument('--choose_test_data',
                         type=int,
-                        default=1,
+                        default=-1,
                         help='Already set the dataset for testing choice: 0 - 8')
     # ----------- test -------0--
 
@@ -215,7 +215,7 @@ def parse_args():
     TEST_DATA = DATASET_NAMES[parser.parse_args().choose_test_data] # max 8
     test_inf = dataset_info(TEST_DATA, is_linux=IS_LINUX)
     test_dir = test_inf['data_dir']
-    is_testing =True# current test _bdcnlossNew256-sd7-1.10.4p5
+    is_testing =False# current test _bdcnlossNew256-sd7-1.10.4p5
 
     # Training settings
     TRAIN_DATA = DATASET_NAMES[0] # BIPED=0
@@ -354,9 +354,10 @@ def main(args):
         from torch.utils.tensorboard import SummaryWriter # for torch 1.4 or greather
         tb_writer = SummaryWriter(log_dir=training_dir)
         # saving training settings
-        training_notes = ['DexiNed, Xavier Normal Init, LR= ' + str(args.lr) + ' WD= '
+        training_notes = ['LDC, Xavier Normal Init, LR= ' + str(args.lr) + ' WD= '
                           + str(args.wd) + ' image size = ' + str(args.img_width)
-                          + ' adjust LR=' + str(args.adjust_lr) + ' Loss Function= CAST-loss2.py '
+                          + ' adjust LR=' + str(args.adjust_lr) +' LRs= '
+                          + str(args.lrs)+' Loss Function= CAST-loss2.py '
                           + str(time.asctime())+args.version_notes]
         info_txt = open(os.path.join(training_dir, 'training_settings.txt'), 'w')
         info_txt.write(str(training_notes))
@@ -434,7 +435,7 @@ def main(args):
     lr2= args.lr
     k=0
     # LR [25e-4, 5e-6,1e-6] WD= [75e-5,1e-6]'
-    set_lr = [25e-4, 5e-6]
+    set_lr = args.lrs# [25e-4, 5e-6]
     set_wd=[75e-5,1e-6]
     for epoch in range(ini_epoch,args.epochs):
         if epoch%7==0:
