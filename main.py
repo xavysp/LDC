@@ -263,11 +263,11 @@ def parse_args():
                         help='True: use same 2 imgs changing channels')  # Just for test
     parser.add_argument('--resume',
                         type=bool,
-                        default=False,
+                        default=True,
                         help='use previous trained data')  # Just for test
     parser.add_argument('--checkpoint_data',
                         type=str,
-                        default='22/22_model.pth',# 37 for biped 60 MDBD
+                        default='10/10_model.pth',# 37 for biped 60 MDBD
                         help='Checkpoint path from which to restore model weights from.')
     parser.add_argument('--test_img_width',
                         type=int,
@@ -291,17 +291,18 @@ def parse_args():
                         default=25,
                         metavar='N',
                         help='Number of training epochs (default: 25).')
-    parser.add_argument('--lr', default=3e-5, type=float,
+    parser.add_argument('--lr', default=5e-5, type=float,
                         help='Initial learning rate. =5e-5')
-    parser.add_argument('--lrs', default=[25e-4, 5e-6], type=float,
+    parser.add_argument('--lrs', default=[3e-3, 2e-6], type=float,
                         help='LR for set epochs')
     parser.add_argument('--wd', type=float, default=5e-6, metavar='WD',
                         help='weight decay (Good 5e-6)')
-    parser.add_argument('--adjust_lr', default=[8, 14], type=int,
+    parser.add_argument('--adjust_lr', default=[8,12], type=int,
                         help='Learning rate step size.')  # [6,9,19]
     parser.add_argument('--version_notes',
-                        default=' Exp 10 CAST loss2.py BSDS cut_size process LR> dec. Co-fision',
-                        type=str, help='version notes')
+                        default=' Exp 16 CAST loss2.py BSDS cut_size process LR> dec. Co-fision',
+                        type=str,
+                        help='version notes')
     parser.add_argument('--batch_size',
                         type=int,
                         default=8,
@@ -325,13 +326,17 @@ def parse_args():
     parser.add_argument('--channel_swap',
                         default=[2, 1, 0],
                         type=int)
+    parser.add_argument('--resume_chpt',
+                        default='result/resume/',
+                        type=str,
+                        help='resume training')
     parser.add_argument('--crop_img',
                         default=True,
                         type=bool,
                         help='If true crop training images, else resize images to match image width and height.')
     parser.add_argument('--mean_pixel_values',
-                        default=[96.939,117.779,119.68, 137.86],
-                        type=float)  # BIPED/MDBD [103.939,116.779,123.68,137.86] [104.00699, 116.66877, 122.67892]
+                        default=[103.939,116.779,123.68, 137.86],
+                        type=float)  # [103.939,116.779,123.68] [104.00699, 116.66877, 122.67892]
     # test on other datasts>  [96.939,117.779,119.68, 137.86]
     args = parser.parse_args()
     return args
@@ -348,13 +353,13 @@ def main(args):
     tb_writer = None
     training_dir = os.path.join(args.output_dir,args.train_data)
     os.makedirs(training_dir,exist_ok=True)
-    checkpoint_path = os.path.join(args.output_dir, args.train_data, args.checkpoint_data)
+    checkpoint_path = os.path.join(args.output_dir, args.train_data,args.checkpoint_data)
     if args.tensorboard and not args.is_testing:
         # from tensorboardX import SummaryWriter  # previous torch version
         from torch.utils.tensorboard import SummaryWriter # for torch 1.4 or greather
         tb_writer = SummaryWriter(log_dir=training_dir)
         # saving training settings
-        training_notes = ['LDC, Xavier Normal Init, LR= ' + str(args.lr) + ' WD= '
+        training_notes =['LDC, Xavier Normal Init, LR= ' + str(args.lr) + ' WD= '
                           + str(args.wd) + ' image size = ' + str(args.img_width)
                           + ' adjust LR=' + str(args.adjust_lr) +' LRs= '
                           + str(args.lrs)+' Loss Function= CAST-loss2.py '
@@ -373,8 +378,9 @@ def main(args):
     ini_epoch =0
     if not args.is_testing:
         if args.resume:
-            ini_epoch=17
-            model.load_state_dict(torch.load(checkpoint_path,
+            checkpoint_path2= os.path.join(args.output_dir, 'BIPED-14',args.checkpoint_data)
+            ini_epoch=11
+            model.load_state_dict(torch.load(checkpoint_path2,
                                          map_location=device))
         dataset_train = BipedDataset(args.input_dir,
                                      img_width=args.img_width,
@@ -435,7 +441,7 @@ def main(args):
     lr2= args.lr
     k=0
     # LR [25e-4, 5e-6,1e-6] WD= [75e-5,1e-6]'
-    set_lr = args.lrs# [25e-4, 5e-6]
+    set_lr = args.lrs#[25e-4, 5e-6]
     set_wd=[75e-5,1e-6]
     for epoch in range(ini_epoch,args.epochs):
         if epoch%7==0:
