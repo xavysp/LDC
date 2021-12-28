@@ -267,7 +267,7 @@ def parse_args():
                         help='use previous trained data')  # Just for test
     parser.add_argument('--checkpoint_data',
                         type=str,
-                        default='10/10_model.pth',# 37 for biped 60 MDBD
+                        default='6/6_model.pth',# 37 for biped 60 MDBD
                         help='Checkpoint path from which to restore model weights from.')
     parser.add_argument('--test_img_width',
                         type=int,
@@ -293,14 +293,14 @@ def parse_args():
                         help='Number of training epochs (default: 25).')
     parser.add_argument('--lr', default=5e-5, type=float,
                         help='Initial learning rate. =5e-5')
-    parser.add_argument('--lrs', default=[3e-3, 2e-6], type=float,
+    parser.add_argument('--lrs', default=[5e-3, 5e-7], type=float,
                         help='LR for set epochs')
     parser.add_argument('--wd', type=float, default=5e-6, metavar='WD',
                         help='weight decay (Good 5e-6)')
     parser.add_argument('--adjust_lr', default=[8,12], type=int,
                         help='Learning rate step size.')  # [6,9,19]
     parser.add_argument('--version_notes',
-                        default=' Exp 16 CAST loss2.py BSDS cut_size process LR> dec. Co-fision',
+                        default=' Exp 20 CAST loss2.py BSDS cut_size process LR> dec. Co-fision',
                         type=str,
                         help='version notes')
     parser.add_argument('--batch_size',
@@ -378,8 +378,8 @@ def main(args):
     ini_epoch =0
     if not args.is_testing:
         if args.resume:
-            checkpoint_path2= os.path.join(args.output_dir, 'BIPED-14',args.checkpoint_data)
-            ini_epoch=11
+            checkpoint_path2= os.path.join(args.output_dir, 'BIPED-6',args.checkpoint_data)
+            ini_epoch=7
             model.load_state_dict(torch.load(checkpoint_path2,
                                          map_location=device))
         dataset_train = BipedDataset(args.input_dir,
