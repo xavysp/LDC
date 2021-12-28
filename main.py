@@ -204,10 +204,10 @@ def testPich(checkpoint_path, dataloader, model, device, output_dir, args):
 
 def parse_args():
     """Parse command line arguments."""
-    parser = argparse.ArgumentParser(description='DexiNed trainer.')
+    parser = argparse.ArgumentParser(description='LDC trainer.')
     parser.add_argument('--choose_test_data',
                         type=int,
-                        default=-1,
+                        default=0,
                         help='Already set the dataset for testing choice: 0 - 8')
     # ----------- test -------0--
 
@@ -215,7 +215,7 @@ def parse_args():
     TEST_DATA = DATASET_NAMES[parser.parse_args().choose_test_data] # max 8
     test_inf = dataset_info(TEST_DATA, is_linux=IS_LINUX)
     test_dir = test_inf['data_dir']
-    is_testing =False# current test _bdcnlossNew256-sd7-1.10.4p5
+    is_testing =True# current test _bdcnlossNew256-sd7-1.10.4p5
 
     # Training settings
     TRAIN_DATA = DATASET_NAMES[0] # BIPED=0
@@ -267,7 +267,7 @@ def parse_args():
                         help='use previous trained data')  # Just for test
     parser.add_argument('--checkpoint_data',
                         type=str,
-                        default='6/6_model.pth',# 37 for biped 60 MDBD
+                        default='12/12_model.pth',# 37 for biped 60 MDBD
                         help='Checkpoint path from which to restore model weights from.')
     parser.add_argument('--test_img_width',
                         type=int,
