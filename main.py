@@ -14,8 +14,9 @@ from torch.utils.data import DataLoader
 from dataset import DATASET_NAMES, BipedDataset, TestDataset, dataset_info
 # from loss import *
 from loss2 import *
-from model import LDC
-# from modelB4 import LDC
+# from modelB6 import LDC
+# from model import LDC
+from modelB4 import LDC
 # from modelB3 import LDC
 # from modelB2 import LDC
 # from model6 import LDC
@@ -25,6 +26,7 @@ from utils.img_processing import (image_normalization, save_image_batch_to_disk,
 IS_LINUX = True if platform.system()=="Linux" else False
 def train_one_epoch(epoch, dataloader, model, criterions, optimizer, device,
                     log_interval_vis, tb_writer, args=None):
+
     imgs_res_folder = os.path.join(args.output_dir, 'current_res')
     os.makedirs(imgs_res_folder,exist_ok=True)
 
@@ -50,7 +52,7 @@ def train_one_epoch(epoch, dataloader, model, criterions, optimizer, device,
         # preds_m = preds_list[:-1]
         # loss = sum([criterion2(preds, labels,l_w) for preds, l_w in zip(preds_list,l_weight0)]) # bdcn_loss2
         loss = sum([criterion1(preds, labels, l_w, device) for preds, l_w in zip(preds_list, l_weight)])  # cats_loss
-        # loss2 = criterion2(preds_f,labels,l_weight[-1], device) # cats
+        # loss2 = criterion1(preds_f,labels,l_weight[-1], device) # cats
         # loss =loss1+loss2
         optimizer.zero_grad()
         loss.backward()
@@ -60,7 +62,7 @@ def train_one_epoch(epoch, dataloader, model, criterions, optimizer, device,
             tmp_loss = np.array(loss_avg).mean()
             tb_writer.add_scalar('loss', tmp_loss,epoch)
 
-        if batch_id % 5 == 0:
+        if batch_id % 10 == 0:
             print(time.ctime(), 'Epoch: {0} Sample {1}/{2} Loss: {3}'
                   .format(epoch, batch_id, len(dataloader), format(loss.item(),'.4f')))
         if batch_id % log_interval_vis == 0:
@@ -143,11 +145,15 @@ def test(checkpoint_path, dataloader, model, device, output_dir, args):
                 labels = sample_batched['labels'].to(device)
             file_names = sample_batched['file_names']
             image_shape = sample_batched['image_shape']
-            print(f"input tensor shape: {images.shape}")
+            print(f"{file_names}: {images.shape}")
             # images = images[:, [2, 1, 0], :, :]
-            start_time = time.time()
+            end = time.perf_counter()
+            if device.type == 'cuda':
+                torch.cuda.synchronize()
             preds = model(images)
-            tmp_duration = time.time() - start_time
+            if device.type == 'cuda':
+                torch.cuda.synchronize()
+            tmp_duration = time.perf_counter() - end
             total_duration.append(tmp_duration)
             save_image_batch_to_disk(preds,
                                      output_dir,
@@ -155,11 +161,10 @@ def test(checkpoint_path, dataloader, model, device, output_dir, args):
                                      image_shape,
                                      arg=args)
             torch.cuda.empty_cache()
-
-    total_duration = np.array(total_duration)
+    total_duration = np.sum(np.array(total_duration))
     print("******** Testing finished in", args.test_data, "dataset. *****")
-    print("Average time per image: %f.4" % total_duration.mean(), "seconds")
-    print("Time spend in the Dataset: %f.4" % total_duration.sum(), "seconds")
+    print("FPS: %f.4" % (len(dataloader)/total_duration))
+    # print("Time spend in the Dataset: %f.4" % total_duration.sum(), "seconds")
 
 def testPich(checkpoint_path, dataloader, model, device, output_dir, args):
     # a test model plus the interganged channels
@@ -204,7 +209,7 @@ def testPich(checkpoint_path, dataloader, model, device, output_dir, args):
 
 def parse_args():
     """Parse command line arguments."""
-    parser = argparse.ArgumentParser(description='LDC trainer.')
+    parser = argparse.ArgumentParser(description='DexiNed trainer.')
     parser.add_argument('--choose_test_data',
                         type=int,
                         default=0,
@@ -263,11 +268,11 @@ def parse_args():
                         help='True: use same 2 imgs changing channels')  # Just for test
     parser.add_argument('--resume',
                         type=bool,
-                        default=True,
+                        default=False,
                         help='use previous trained data')  # Just for test
     parser.add_argument('--checkpoint_data',
                         type=str,
-                        default='12/12_model.pth',# 37 for biped 60 MDBD
+                        default='13/13_model.pth',# 37 for biped 60 MDBD
                         help='Checkpoint path from which to restore model weights from.')
     parser.add_argument('--test_img_width',
                         type=int,
@@ -288,19 +293,19 @@ def parse_args():
 
     parser.add_argument('--epochs',
                         type=int,
-                        default=25,
+                        default=31,
                         metavar='N',
                         help='Number of training epochs (default: 25).')
-    parser.add_argument('--lr', default=5e-5, type=float,
+    parser.add_argument('--lr', default=3e-4, type=float,
                         help='Initial learning rate. =5e-5')
-    parser.add_argument('--lrs', default=[5e-3, 5e-7], type=float,
+    parser.add_argument('--lrs', default=[6e-6], type=float,
                         help='LR for set epochs')
-    parser.add_argument('--wd', type=float, default=5e-6, metavar='WD',
+    parser.add_argument('--wd', type=float, default=3e-8, metavar='WD',
                         help='weight decay (Good 5e-6)')
-    parser.add_argument('--adjust_lr', default=[8,12], type=int,
+    parser.add_argument('--adjust_lr', default=[15], type=int,
                         help='Learning rate step size.')  # [6,9,19]
     parser.add_argument('--version_notes',
-                        default=' Exp 20 CAST loss2.py BSDS cut_size process LR> dec. Co-fision',
+                        default=' B4 Exp 60 CAST loss2.py BSDS cut_size process LR> dec. Co-fision',
                         type=str,
                         help='version notes')
     parser.add_argument('--batch_size',
@@ -335,9 +340,9 @@ def parse_args():
                         type=bool,
                         help='If true crop training images, else resize images to match image width and height.')
     parser.add_argument('--mean_pixel_values',
-                        default=[103.939,116.779,123.68, 137.86],
+                        default=[95.939,117.779,119.68, 137.86],
                         type=float)  # [103.939,116.779,123.68] [104.00699, 116.66877, 122.67892]
-    # test on other datasts>  [96.939,117.779,119.68, 137.86]
+    # test on other datasts>  [95.939,117.779,119.68, 137.86]
     args = parser.parse_args()
     return args
 
@@ -378,8 +383,8 @@ def main(args):
     ini_epoch =0
     if not args.is_testing:
         if args.resume:
-            checkpoint_path2= os.path.join(args.output_dir, 'BIPED-6',args.checkpoint_data)
-            ini_epoch=7
+            checkpoint_path2= os.path.join(args.output_dir, 'BIPED-54-B4',args.checkpoint_data)
+            ini_epoch=8
             model.load_state_dict(torch.load(checkpoint_path2,
                                          map_location=device))
         dataset_train = BipedDataset(args.input_dir,
@@ -418,6 +423,12 @@ def main(args):
         else:
             test(checkpoint_path, dataloader_val, model, device, output_dir, args)
 
+        # Count parameters:
+        num_param = count_parameters(model)
+        print('-------------------------------------------------------')
+        print('Number of parameters of current DexiNed model:')
+        print(num_param)
+        print('-------------------------------------------------------')
         return
 
     criterion1 = cats_loss #bdcn_loss2
@@ -468,14 +479,12 @@ def main(args):
         os.makedirs(output_dir_epoch,exist_ok=True)
         os.makedirs(img_test_dir,exist_ok=True)
 
-        avg_loss =train_one_epoch(epoch,
-                        dataloader_train,
-                        model,
-                        criterion,
+        avg_loss =train_one_epoch(epoch,dataloader_train,
+                        model, criterion,
                         optimizer,
                         device,
                         args.log_interval_vis,
-                        tb_writer,
+                        tb_writer=tb_writer,
                         args=args)
         validate_one_epoch(epoch,
                            dataloader_val,
