@@ -272,7 +272,7 @@ def parse_args():
                         help='use previous trained data')  # Just for test
     parser.add_argument('--checkpoint_data',
                         type=str,
-                        default='13/13_model.pth',# 37 for biped 60 MDBD
+                        default='16/16_model.pth',# 37 for biped 60 MDBD
                         help='Checkpoint path from which to restore model weights from.')
     parser.add_argument('--test_img_width',
                         type=int,
@@ -296,11 +296,11 @@ def parse_args():
                         default=31,
                         metavar='N',
                         help='Number of training epochs (default: 25).')
-    parser.add_argument('--lr', default=3e-4, type=float,
+    parser.add_argument('--lr', default=5e-4, type=float,
                         help='Initial learning rate. =5e-5')
-    parser.add_argument('--lrs', default=[6e-6], type=float,
+    parser.add_argument('--lrs', default=[5e-6], type=float,
                         help='LR for set epochs')
-    parser.add_argument('--wd', type=float, default=3e-8, metavar='WD',
+    parser.add_argument('--wd', type=float, default=5e-8, metavar='WD',
                         help='weight decay (Good 5e-6)')
     parser.add_argument('--adjust_lr', default=[15], type=int,
                         help='Learning rate step size.')  # [6,9,19]
@@ -340,9 +340,10 @@ def parse_args():
                         type=bool,
                         help='If true crop training images, else resize images to match image width and height.')
     parser.add_argument('--mean_pixel_values',
-                        default=[95.939,117.779,119.68, 137.86],
+                        default=[103.939,116.779,123.68],
                         type=float)  # [103.939,116.779,123.68] [104.00699, 116.66877, 122.67892]
     # test on other datasts>  [95.939,117.779,119.68, 137.86]
+    # BIPED mean_bgr processed [160.913,160.275,162.239]
     args = parser.parse_args()
     return args
 
