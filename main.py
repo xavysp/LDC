@@ -212,7 +212,7 @@ def parse_args():
     parser = argparse.ArgumentParser(description='DexiNed trainer.')
     parser.add_argument('--choose_test_data',
                         type=int,
-                        default=0,
+                        default=-1,
                         help='Already set the dataset for testing choice: 0 - 8')
     # ----------- test -------0--
 
@@ -272,7 +272,7 @@ def parse_args():
                         help='use previous trained data')  # Just for test
     parser.add_argument('--checkpoint_data',
                         type=str,
-                        default='16/16_model.pth',# 37 for biped 60 MDBD
+                        default='10/10_model.pth',# 37 for biped 60 MDBD
                         help='Checkpoint path from which to restore model weights from.')
     parser.add_argument('--test_img_width',
                         type=int,
@@ -340,10 +340,10 @@ def parse_args():
                         type=bool,
                         help='If true crop training images, else resize images to match image width and height.')
     parser.add_argument('--mean_pixel_values',
-                        default=[103.939,116.779,123.68],
+                        default=[95.939,117.779,119.68, 137.86],
                         type=float)  # [103.939,116.779,123.68] [104.00699, 116.66877, 122.67892]
     # test on other datasts>  [95.939,117.779,119.68, 137.86]
-    # BIPED mean_bgr processed [160.913,160.275,162.239]
+    # BIPED mean_bgr processed [160.913,160.275,162.239,123.68]
     args = parser.parse_args()
     return args
 
