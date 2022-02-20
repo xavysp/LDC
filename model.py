@@ -1,5 +1,5 @@
 # Lightweight Dense CNN for Edge Detection
-# It has less than 1Million parameters
+# It has less than 1Million parameters, with 5 blocks fo DexiNed
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -240,10 +240,6 @@ class LDC(nn.Module):
         block_5, _ = self.dblock_5([block_4_add, block_5_pre_dense]) # [8,32,44,44]
         # block_5_add = block_5 + block_4_side
 
-        # # Block 6
-        # block_6_pre_dense = self.pre_dense_6(block_5)
-        # block_6, _ = self.dblock_6([block_5_add, block_6_pre_dense])
-
         # upsampling blocks
         out_1 = self.up_block_1(block_1)
         out_2 = self.up_block_2(block_2)
@@ -276,9 +272,3 @@ if __name__ == '__main__':
     model = LDC().to(device)
     output = model(input)
     print(f"output shapes: {[t.shape for t in output]}")
-
-    # for i in range(20000):
-    #     print(i)
-    #     output = model(input)
-    #     loss = nn.MSELoss()(output[-1], target)
-    #     loss.backward()

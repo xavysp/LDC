@@ -108,8 +108,8 @@ def dataset_info(dataset_name, is_linux=True):
         }
     else:
         config = {
-            'BSDS': {'img_height': 480,  # 321
-                     'img_width': 480,  # 481
+            'BSDS': {'img_height': 512,  # 321
+                     'img_width': 512,  # 481
                      'test_list': 'test_pair.lst',
                      'data_dir': 'C:/Users/xavysp/dataset/BSDS',  # mean_rgb
                      'yita': 0.5},
