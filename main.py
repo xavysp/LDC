@@ -185,8 +185,8 @@ def testPich(checkpoint_path, dataloader, model, device, output_dir, args):
             image_shape = sample_batched['image_shape']
             print(f"input tensor shape: {images.shape}")
             start_time = time.time()
-            # images2 = images[:, [1, 0, 2], :, :]  #GBR
-            images2 = images[:, [2, 1, 0], :, :] # RGB
+            images2 = images[:, [1, 0, 2], :, :]  #GBR
+            # images2 = images[:, [2, 1, 0], :, :] # RGB
             preds = model(images)
             preds2 = model(images2)
             tmp_duration = time.time() - start_time
@@ -209,7 +209,7 @@ def parse_args():
     parser = argparse.ArgumentParser(description='DexiNed trainer.')
     parser.add_argument('--choose_test_data',
                         type=int,
-                        default=1,
+                        default=0,
                         help='Already set the dataset for testing choice: 0 - 8')
     # ----------- test -------0--
 
@@ -221,7 +221,7 @@ def parse_args():
 
     # Training settings
     # BIPED-B2=1, BIPDE-B3=2, just for evaluation, using LDC trained with 2 or 3 bloacks
-    TRAIN_DATA = DATASET_NAMES[2] # BIPED=0, BRIND=4, MDBD=8
+    TRAIN_DATA = DATASET_NAMES[0] # BIPED=0, BRIND=4, MDBD=8
     train_inf = dataset_info(TRAIN_DATA, is_linux=IS_LINUX)
     train_dir = train_inf['data_dir']
 
@@ -270,7 +270,7 @@ def parse_args():
                         help='use previous trained data')  # Just for test
     parser.add_argument('--checkpoint_data',
                         type=str,
-                        default='11/11_model.pth',# 37 for biped 60 MDBD
+                        default='16/16_model.pth',# 37 for biped 60 MDBD
                         help='Checkpoint path from which to restore model weights from.')
     parser.add_argument('--test_img_width',
                         type=int,
