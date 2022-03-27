@@ -4,19 +4,17 @@ import torch.nn.functional as F
 
 
 def bdcn_loss2(inputs, targets, l_weight=1.1):
-    # bdcn loss with the rcf approach
+    # bdcn loss modified in DexiNed
+
     targets = targets.long()
-    # mask = (targets > 0.1).float()
     mask = targets.float()
     num_positive = torch.sum((mask > 0.0).float()).float() # >0.1
     num_negative = torch.sum((mask <= 0.0).float()).float() # <= 0.1
 
     mask[mask > 0.] = 1.0 * num_negative / (num_positive + num_negative) #0.1
     mask[mask <= 0.] = 1.1 * num_positive / (num_positive + num_negative)  # before mask[mask <= 0.1]
-    # mask[mask == 2] = 0
     inputs= torch.sigmoid(inputs)
     cost = torch.nn.BCELoss(mask, reduction='none')(inputs, targets.float())
-    # cost = torch.mean(cost.float().mean((1, 2, 3))) # before sum
     cost = torch.sum(cost.float().mean((1, 2, 3))) # before sum
     return l_weight*cost
 
@@ -73,6 +71,7 @@ def textureloss(prediction, label, mask_radius, device='cpu'):
 
 def cats_loss(prediction, label, l_weight=[0.,0.], device='cpu'):
     # tracingLoss
+    # print(prediction[1,0,20,100:105])
     tex_factor,bdr_factor = l_weight
     balanced_w = 1.1
     label = label.float()
@@ -97,81 +96,3 @@ def cats_loss(prediction, label, l_weight=[0.,0.], device='cpu'):
     bdrcost = bdrloss(prediction.float(), label_w.float(), radius=4, device=device)
 
     return cost + bdr_factor * bdrcost + tex_factor * textcost
-
-
-def f1_accuracy(inputs, targets, is_training=False):
-
-    # from https://gist.github.com/SuperShinyEyes/dcc68a08ff8b615442e3bc6a9b55a354
-    epsilon = 1e-8
-    # targets = targets.float()
-    targets = targets.long()
-    inputs = torch.sigmoid(inputs)
-    y = (targets > 0.).float()
-    # x = (inputs>0.).float()
-    tp = (inputs*y).sum((1,2,3), keepdim=True).to(torch.float32)
-    tn = ((1-y)*(1-inputs)).sum((1,2,3), keepdim=True).to(torch.float32)
-    fp = ((1-y)*inputs).sum((1,2,3), keepdim=True).to(torch.float32)
-    fn = (y*(1-inputs)).sum((1,2,3), keepdim=True).to(torch.float32)
-
-    prec = tp/(tp+fp+epsilon)
-    rec = tp/(tp+fn+epsilon)
-
-    f1_loss = 2*(prec*rec)/(prec+rec+epsilon)
-    # f1_loss.requires_grad=is_training
-    f1_loss = f1_loss.clamp(min=epsilon, max=1 - epsilon)
-    # f1_loss = prec.clamp(min=epsilon, max=1 - epsilon)
-    # return 1 - f1.mean()
-    f1_loss = 1- f1_loss.sum()
-    # if f1_loss<0:
-    #     print(f1_loss)
-
-    return f1_loss
-
-def f1_accuracy2(inputs, targets, is_training=False):
-
-    # from https://gist.github.com/SuperShinyEyes/dcc68a08ff8b615442e3bc6a9b55a354
-    epsilon = 1e-8
-    # targets = targets.float()
-    targets = targets.long()
-    inputs = torch.sigmoid(inputs)
-    y = (targets > 0.).float()
-    # x = (inputs>0.).float()
-    tp = (inputs*y).sum((1,2,3), keepdim=True).to(torch.float32)
-    tn = ((1-y)*(1-inputs)).sum((1,2,3), keepdim=True).to(torch.float32)
-    fp = ((1-y)*inputs).sum((1,2,3), keepdim=True).to(torch.float32)
-    fn = (y*(1-inputs)).sum((1,2,3), keepdim=True).to(torch.float32)
-
-    prec = tp/(tp+fp+epsilon)
-    rec = tp/(tp+fn+epsilon)
-
-    f1_loss = 2*(prec*rec)/(prec+rec+epsilon)
-    # f1_loss.requires_grad=is_training
-    f1_loss = f1_loss.clamp(min=epsilon, max=1 - epsilon)
-    # f1_loss = prec.clamp(min=epsilon, max=1 - epsilon)
-    # return 1 - f1.mean()
-    f1_loss = 1- f1_loss.sum()
-    # if f1_loss<0:
-    #     print(f1_loss)
-
-    return f1_loss*0.7
-
-def f1_loss(inputs, targets, is_training=False):
-
-    # from https://gist.github.com/SuperShinyEyes/dcc68a08ff8b615442e3bc6a9b55a354
-    epsilon = 1e-8
-    # targets = targets.float()
-    targets = targets.long()
-    y = (targets > 0.).float()
-    tp = (inputs*y).sum((1,2,3), keepdim=True).to(torch.float32)
-    tn = ((1-y)*(1-inputs)).sum((1,2,3), keepdim=True).to(torch.float32)
-    fp = ((1-y)*inputs).sum((1,2,3), keepdim=True).to(torch.float32)
-    fn = (y*(1-inputs)).sum((1,2,3), keepdim=True).to(torch.float32)
-
-    prec = tp/(tp+fp+epsilon)
-    rec = tp/(tp+fn+epsilon)
-
-    f1_loss = 2*(prec*rec)/(prec+rec+epsilon)
-    # f1_loss.requires_grad=is_training
-    f1_loss = f1_loss.clamp(min=epsilon, max=1 - epsilon)
-    # return 1 - f1.mean()
-    return 1- f1_loss.sum()

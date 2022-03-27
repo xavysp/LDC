@@ -9,12 +9,14 @@ import json
 
 DATASET_NAMES = [
     'BIPED',
+    'BIPED-B2',
+    'BIPED-B3',
     'BSDS',
     'BRIND',
     'BSDS300',
     'CID',
     'DCD',
-    'MDBD', #5
+    'MDBD',  # 5
     'PASCAL',
     'NYUD',
     'CLASSIC'
@@ -26,8 +28,8 @@ def dataset_info(dataset_name, is_linux=True):
 
         config = {
             'BSDS': {
-                'img_height': 512, #321
-                'img_width': 512, #481
+                'img_height': 512,  # 321
+                'img_width': 512,  # 481
                 'train_list': 'train_pair.lst',
                 'test_list': 'test_pair.lst',
                 'data_dir': '/opt/dataset/BSDS',  # mean_rgb
@@ -36,22 +38,22 @@ def dataset_info(dataset_name, is_linux=True):
             'BRIND': {
                 'img_height': 512,  # 321
                 'img_width': 512,  # 481
-                'train_list': 'train_pair1.lst',
+                'train_list': 'train_pair2.lst',
                 'test_list': 'test_pair.lst',
                 'data_dir': '/opt/dataset/BRIND',  # mean_rgb
                 'yita': 0.5
             },
             'BSDS300': {
-                'img_height': 512, #321
-                'img_width': 512, #481
+                'img_height': 512,  # 321
+                'img_width': 512,  # 481
                 'test_list': 'test_pair.lst',
                 'train_list': None,
                 'data_dir': '/opt/dataset/BSDS300',  # NIR
                 'yita': 0.5
             },
             'PASCAL': {
-                'img_height': 416, # 375
-                'img_width': 512, #500
+                'img_height': 416,  # 375
+                'img_width': 512,  # 500
                 'test_list': 'test_pair.lst',
                 'train_list': None,
                 'data_dir': '/opt/dataset/PASCAL',  # mean_rgb
@@ -66,8 +68,8 @@ def dataset_info(dataset_name, is_linux=True):
                 'yita': 0.3
             },
             'NYUD': {
-                'img_height': 448,#425
-                'img_width': 560,#560
+                'img_height': 448,  # 425
+                'img_width': 560,  # 560
                 'test_list': 'test_pair.lst',
                 'train_list': None,
                 'data_dir': '/opt/dataset/NYUD',  # mean_rgb
@@ -82,24 +84,24 @@ def dataset_info(dataset_name, is_linux=True):
                 'yita': 0.3
             },
             'BIPED': {
-                'img_height': 720, #720 # 1088
-                'img_width': 1280, # 1280 5 1920
+                'img_height': 720,  # 720 # 1088
+                'img_width': 1280,  # 1280 5 1920
                 'test_list': 'test_pair.lst',
                 'train_list': 'train_rgb.lst',
                 'data_dir': '/opt/dataset/BIPED',  # mean_rgb
                 'yita': 0.5
             },
             'CLASSIC': {
-                'img_height': 512,
-                'img_width': 512,
+                'img_height': 512,  #
+                'img_width': 512,  # 512
                 'test_list': None,
                 'train_list': None,
                 'data_dir': 'data',  # mean_rgb
                 'yita': 0.5
             },
             'DCD': {
-                'img_height': 352, #240
-                'img_width': 480,# 360
+                'img_height': 352,  # 240
+                'img_width': 480,  # 360
                 'test_list': 'test_pair.lst',
                 'train_list': None,
                 'data_dir': '/opt/dataset/DCD',  # mean_rgb
@@ -108,20 +110,11 @@ def dataset_info(dataset_name, is_linux=True):
         }
     else:
         config = {
-            'BSDS': {'img_height': 512,  # 321
-                     'img_width': 512,  # 481
+            'BSDS': {'img_height': 480,  # 321
+                     'img_width': 480,  # 481
                      'test_list': 'test_pair.lst',
                      'data_dir': 'C:/Users/xavysp/dataset/BSDS',  # mean_rgb
                      'yita': 0.5},
-
-            'BRIND': {
-                         'img_height': 512,  # 321
-                         'img_width': 512,  # 481
-                         'train_list': 'train_pair1.lst',
-                         'test_list': 'test_pair.lst',
-                         'data_dir': '/opt/dataset/BRIND',  # mean_rgb
-                         'yita': 0.5
-                     },
             'BSDS300': {'img_height': 512,  # 321
                         'img_width': 512,  # 481
                         'test_list': 'test_pair.lst',
@@ -143,11 +136,11 @@ def dataset_info(dataset_name, is_linux=True):
                      'data_dir': 'C:/Users/xavysp/dataset/NYUD',  # mean_rgb
                      'yita': 0.5},
             'MDBD': {'img_height': 720,
-                         'img_width': 1280,
-                         'test_list': 'test_pair.lst',
-                         'train_list': 'train_pair.lst',
-                         'data_dir': 'C:/Users/xavysp/dataset/MDBD',  # mean_rgb
-                         'yita': 0.3},
+                     'img_width': 1280,
+                     'test_list': 'test_pair.lst',
+                     'train_list': 'train_pair.lst',
+                     'data_dir': 'C:/Users/xavysp/dataset/MDBD',  # mean_rgb
+                     'yita': 0.3},
             'BIPED': {'img_height': 720,  # 720
                       'img_width': 1280,  # 1280
                       'test_list': 'test_pair.lst',
@@ -185,7 +178,7 @@ class TestDataset(Dataset):
         self.data_root = data_root
         self.test_data = test_data
         self.test_list = test_list
-        self.args=arg
+        self.args = arg
         # self.arg = arg
         # self.mean_bgr = arg.mean_pixel_values[0:3] if len(arg.mean_pixel_values) == 4 \
         #     else arg.mean_pixel_values
@@ -211,7 +204,7 @@ class TestDataset(Dataset):
                     f"Test list not provided for dataset: {self.test_data}")
 
             list_name = os.path.join(self.data_root, self.test_list)
-            if self.test_data.upper()=='BIPED':
+            if self.test_data.upper() == 'BIPED':
 
                 with open(list_name) as f:
                     files = json.load(f)
@@ -236,13 +229,13 @@ class TestDataset(Dataset):
         return sample_indices
 
     def __len__(self):
-        return len(self.data_index[0]) if self.test_data.upper()=='CLASSIC' else len(self.data_index)
+        return len(self.data_index[0]) if self.test_data.upper() == 'CLASSIC' else len(self.data_index)
 
     def __getitem__(self, idx):
         # get data sample
         # image_path, label_path = self.data_index[idx]
         if self.data_index[1] is None:
-            image_path = self.data_index[0][idx] if len(self.data_index[0])>1 else self.data_index[0][idx-1]
+            image_path = self.data_index[0][idx] if len(self.data_index[0]) > 1 else self.data_index[0][idx - 1]
         else:
             image_path = self.data_index[idx][0]
         label_path = None if self.test_data == "CLASSIC" else self.data_index[idx][1]
@@ -279,15 +272,15 @@ class TestDataset(Dataset):
             img_height = self.img_height
             img_width = self.img_width
             print(
-                f"actual size: {img.shape}, target size: {( img_height,img_width,)}")
+                f"actual size: {img.shape}, target size: {(img_height, img_width,)}")
             # img = cv2.resize(img, (self.img_width, self.img_height))
-            img = cv2.resize(img, (img_width,img_height))
+            img = cv2.resize(img, (img_width, img_height))
             gt = None
 
         # Make images and labels at least 512 by 512
         elif img.shape[0] < 512 or img.shape[1] < 512:
-            img = cv2.resize(img, (self.args.test_img_width, self.args.test_img_height)) # 512
-            gt = cv2.resize(gt, (self.args.test_img_width, self.args.test_img_height)) # 512
+            img = cv2.resize(img, (self.args.test_img_width, self.args.test_img_height))  # 512
+            gt = cv2.resize(gt, (self.args.test_img_width, self.args.test_img_height))  # 512
 
         # Make sure images and labels are divisible by 2^4=16
         elif img.shape[0] % 16 != 0 or img.shape[1] % 16 != 0:
@@ -296,8 +289,8 @@ class TestDataset(Dataset):
             img = cv2.resize(img, (img_width, img_height))
             gt = cv2.resize(gt, (img_width, img_height))
         else:
-            img_width =self.args.test_img_width
-            img_height =self.args.test_img_height
+            img_width = self.args.test_img_width
+            img_height = self.args.test_img_height
             img = cv2.resize(img, (img_width, img_height))
             gt = cv2.resize(gt, (img_width, img_height))
 
@@ -359,7 +352,7 @@ class BipedDataset(Dataset):
 
         data_root = os.path.abspath(self.data_root)
         sample_indices = []
-        if self.arg.train_data.lower()=='biped':
+        if self.arg.train_data.lower() == 'biped':
 
             images_path = os.path.join(data_root,
                                        'edges/imgs',
@@ -382,7 +375,7 @@ class BipedDataset(Dataset):
                     )
         else:
             file_path = os.path.join(data_root, self.arg.train_list)
-            if self.arg.train_data.lower()=='bsds':
+            if self.arg.train_data.lower() == 'bsds':
 
                 with open(file_path, 'r') as f:
                     files = f.readlines()
@@ -393,8 +386,8 @@ class BipedDataset(Dataset):
                     tmp_img = pair[0]
                     tmp_gt = pair[1]
                     sample_indices.append(
-                        (os.path.join(data_root,tmp_img),
-                         os.path.join(data_root,tmp_gt),))
+                        (os.path.join(data_root, tmp_img),
+                         os.path.join(data_root, tmp_gt),))
             else:
                 with open(file_path) as f:
                     files = json.load(f)
@@ -425,26 +418,20 @@ class BipedDataset(Dataset):
         if len(gt.shape) == 3:
             gt = gt[:, :, 0]
 
-        gt /= 255. # for DexiNed input and BDCN
+        gt /= 255.  # for DexiNed input and BDCN
 
         img = np.array(img, dtype=np.float32)
         img -= self.mean_bgr
-        i_h, i_w,_ = img.shape
-        # data = []
-        # if self.scale is not None:
-        #     for scl in self.scale:
-        #         img_scale = cv2.resize(img, None, fx=scl, fy=scl, interpolation=cv2.INTER_LINEAR)
-        #         data.append(torch.from_numpy(img_scale.transpose((2, 0, 1))).float())
-        #     return data, gt
+        i_h, i_w, _ = img.shape
         #  400 for BIPEd and 352 for BSDS check with 384
-        crop_size = self.img_height if self.img_height == self.img_width else None#448# MDBD=480 BIPED=480/400 BSDS=352
+        crop_size = self.img_height if self.img_height == self.img_width else None  # 448# MDBD=480 BIPED=480/400 BSDS=352
 
         # for BSDS 352/BRIND
-        if i_w> crop_size and i_h>crop_size: # later 400, before crop_size
+        if i_w > crop_size and i_h > crop_size:  # later 400, before crop_size
             i = random.randint(0, i_h - crop_size)
             j = random.randint(0, i_w - crop_size)
-            img = img[i:i + crop_size , j:j + crop_size ]
-            gt = gt[i:i + crop_size , j:j + crop_size ]
+            img = img[i:i + crop_size, j:j + crop_size]
+            gt = gt[i:i + crop_size, j:j + crop_size]
 
         # # for BIPED/MDBD
         # if i_w> 420 and i_h>420: #before np.random.random() > 0.4
@@ -471,22 +458,15 @@ class BipedDataset(Dataset):
             # New addidings
             img = cv2.resize(img, dsize=(crop_size, crop_size))
             gt = cv2.resize(gt, dsize=(crop_size, crop_size))
-        # BSDS
-        # gt[gt>0.28]=1. # BSDS/MDBD
-        # gt[gt<=0.28]=0. # BSDS/MDBD
-        # for BIPED / BRIND
-        gt[gt > 0.2] += 0.6# 0.5 for BIPED/BSDS-RIND
-        gt = np.clip(gt, 0., 1.) # BIPED/BSDS-RIND
-        # # for MDBD
+        # # BRIND
         # gt[gt > 0.1] +=0.2#0.4
         # gt = np.clip(gt, 0., 1.)
-        # # -----------------------------------
-        # gt[gt==0]=0.
-        # gt[np.logical_and(gt>0.,gt<0.5)] = 2.
-        # gt[gt>=0.5]=1.
-        #
-        # gt = gt.astype('float32')
-        # ----------------------------------
+        # for BIPED
+        gt[gt > 0.2] += 0.6  # 0.5 for BIPED
+        gt = np.clip(gt, 0., 1.)  # BIPED
+        # # for MDBD
+        # gt[gt > 0.3] +=0.7#0.4
+        # gt = np.clip(gt, 0., 1.)
 
         img = img.transpose((2, 0, 1))
         img = torch.from_numpy(img.copy()).float()

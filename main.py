@@ -15,7 +15,7 @@ from dataset import DATASET_NAMES, BipedDataset, TestDataset, dataset_info
 # from loss import *
 from loss2 import *
 # from modelB6 import LDC
-# from model import LDC
+# from modelB5 import LDC
 from modelB4 import LDC
 # from modelB3 import LDC
 # from modelB2 import LDC
@@ -38,7 +38,8 @@ def train_one_epoch(epoch, dataloader, model, criterions, optimizer, device,
     # Put model in training mode
     model.train()
 
-    l_weight0 = [0.7,0.7,1.1,1.1,0.7,1.3] # for bdcn loss2
+    l_weight0 = [0.7,0.7,1.1,0.7,1.3] # for bdcn loss2-B4
+    # l_weight0 = [0.7, 0.7, 1.1, 1.1, 0.3, 0.3, 1.3] # for bdcn loss2-B6
 
     l_weight = [[0.05, 2.], [0.05, 2.], [0.05, 2.],
                 [0.1, 1.], [0.1, 1.], [0.1, 1.],
@@ -48,12 +49,10 @@ def train_one_epoch(epoch, dataloader, model, criterions, optimizer, device,
         images = sample_batched['images'].to(device)  # BxCxHxW
         labels = sample_batched['labels'].to(device)  # BxHxW
         preds_list = model(images)
-        # preds_f = preds_list[-1]
-        # preds_m = preds_list[:-1]
-        # loss = sum([criterion2(preds, labels,l_w) for preds, l_w in zip(preds_list,l_weight0)]) # bdcn_loss2
+
+        # loss = sum([criterion2(preds, labels,l_w) for preds, l_w in zip(preds_list[:-1],l_weight0)]) # bdcn_loss2
         loss = sum([criterion1(preds, labels, l_w, device) for preds, l_w in zip(preds_list, l_weight)])  # cats_loss
-        # loss2 = criterion1(preds_f,labels,l_weight[-1], device) # cats
-        # loss =loss1+loss2
+
         optimizer.zero_grad()
         loss.backward()
         optimizer.step()
@@ -134,7 +133,6 @@ def test(checkpoint_path, dataloader, model, device, output_dir, args):
     model.load_state_dict(torch.load(checkpoint_path,
                                      map_location=device))
 
-    # Put model in evaluation mode
     model.eval()
 
     with torch.no_grad():
@@ -145,8 +143,8 @@ def test(checkpoint_path, dataloader, model, device, output_dir, args):
                 labels = sample_batched['labels'].to(device)
             file_names = sample_batched['file_names']
             image_shape = sample_batched['image_shape']
+
             print(f"{file_names}: {images.shape}")
-            # images = images[:, [2, 1, 0], :, :]
             end = time.perf_counter()
             if device.type == 'cuda':
                 torch.cuda.synchronize()
@@ -175,7 +173,6 @@ def testPich(checkpoint_path, dataloader, model, device, output_dir, args):
     model.load_state_dict(torch.load(checkpoint_path,
                                      map_location=device))
 
-    # Put model in evaluation mode
     model.eval()
 
     with torch.no_grad():
@@ -212,7 +209,7 @@ def parse_args():
     parser = argparse.ArgumentParser(description='DexiNed trainer.')
     parser.add_argument('--choose_test_data',
                         type=int,
-                        default=6,
+                        default=1,
                         help='Already set the dataset for testing choice: 0 - 8')
     # ----------- test -------0--
 
@@ -220,10 +217,11 @@ def parse_args():
     TEST_DATA = DATASET_NAMES[parser.parse_args().choose_test_data] # max 8
     test_inf = dataset_info(TEST_DATA, is_linux=IS_LINUX)
     test_dir = test_inf['data_dir']
-    is_testing =True# current test _bdcnlossNew256-sd7-1.10.4p5
+    is_testing =True
 
     # Training settings
-    TRAIN_DATA = DATASET_NAMES[6] # BIPED=0
+    # BIPED-B2=1, BIPDE-B3=2, just for evaluation, using LDC trained with 2 or 3 bloacks
+    TRAIN_DATA = DATASET_NAMES[2] # BIPED=0, BRIND=4, MDBD=8
     train_inf = dataset_info(TRAIN_DATA, is_linux=IS_LINUX)
     train_dir = train_inf['data_dir']
 
@@ -245,7 +243,7 @@ def parse_args():
                         type=str,
                         choices=DATASET_NAMES,
                         default=TRAIN_DATA,
-                        help='Name of the dataset.')
+                        help='Name of the dataset.')# TRAIN_DATA,BIPED-B3
     parser.add_argument('--test_data',
                         type=str,
                         choices=DATASET_NAMES,
@@ -264,7 +262,7 @@ def parse_args():
                         help='Script in testing mode.')
     parser.add_argument('--double_img',
                         type=bool,
-                        default=False,
+                        default=True,
                         help='True: use same 2 imgs changing channels')  # Just for test
     parser.add_argument('--resume',
                         type=bool,
@@ -296,16 +294,16 @@ def parse_args():
                         default=31,
                         metavar='N',
                         help='Number of training epochs (default: 25).')
-    parser.add_argument('--lr', default=5e-4, type=float,
+    parser.add_argument('--lr', default=5e-5, type=float,
                         help='Initial learning rate. =5e-5')
-    parser.add_argument('--lrs', default=[5e-6], type=float,
+    parser.add_argument('--lrs', default=[25e-4,5e-4,1e-5], type=float,
                         help='LR for set epochs')
-    parser.add_argument('--wd', type=float, default=5e-8, metavar='WD',
+    parser.add_argument('--wd', type=float, default=0., metavar='WD',
                         help='weight decay (Good 5e-6)')
-    parser.add_argument('--adjust_lr', default=[15], type=int,
+    parser.add_argument('--adjust_lr', default=[6,12,18], type=int,
                         help='Learning rate step size.')  # [6,9,19]
     parser.add_argument('--version_notes',
-                        default=' B4 Exp 83X- e-15 CAST loss2.py BSDS cut_size process LR> dec. Co-fision',
+                        default='LDC-BIPED RGB mean B4 Exp 67L3 xavier init normal+ init normal bdcnLoss2+CatsLoss2 Cofusion',
                         type=str,
                         help='version notes')
     parser.add_argument('--batch_size',
@@ -340,12 +338,11 @@ def parse_args():
                         type=bool,
                         help='If true crop training images, else resize images to match image width and height.')
     parser.add_argument('--mean_pixel_values',
-                        default=[103.939,116.779,123.68, 137.86],
-                        type=float)  # [103.939,116.779,123.68, 137.86] [104.00699, 116.66877, 122.67892]
-    # test on other datasts>  [95.939,117.779,119.68, 137.86]
-    # BRIND mean = [104.007, 116.669, 122.679, 137.86] /
-    # [124.007, 136.669, 142.679, 137.86]
-    # BIPED mean_bgr processed [160.913,160.275,162.239, 137.86]
+                        default=[103.939,116.779,123.68,137.86],
+                        type=float)  # [103.939,116.779,123.68,137.86] [104.00699, 116.66877, 122.67892]
+    # test on other datasts>  [96.939,117.779,119.68, 137.86]
+    # BRIND mean = [104.007, 116.669, 122.679, 137.86]
+    # BIPED mean_bgr processed [160.913,160.275,162.239,137.86]
     # fixed BIDEP mean [132.423,138.527, 142.959, 137.86]
     args = parser.parse_args()
     return args
@@ -455,9 +452,7 @@ def main(args):
     adjust_lr = args.adjust_lr
     lr2= args.lr
     k=0
-    # LR [25e-4, 5e-6,1e-6] WD= [75e-5,1e-6]'
     set_lr = args.lrs#[25e-4, 5e-6]
-    set_wd=[75e-5,1e-6]
     for epoch in range(ini_epoch,args.epochs):
         if epoch%7==0:
 
