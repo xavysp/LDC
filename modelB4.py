@@ -1,5 +1,5 @@
 # Lightweight Dense CNN for Edge Detection
-# It has less than 1Million parameters
+# It has less than 1 Million parameters
 import torch
 import torch.nn as nn
 import torch.nn.functional as F

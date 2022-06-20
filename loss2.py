@@ -1,6 +1,5 @@
 import torch
 import torch.nn.functional as F
-# from dexi_utils import *
 
 
 def bdcn_loss2(inputs, targets, l_weight=1.1):
@@ -71,7 +70,7 @@ def textureloss(prediction, label, mask_radius, device='cpu'):
 
 def cats_loss(prediction, label, l_weight=[0.,0.], device='cpu'):
     # tracingLoss
-    # print(prediction[1,0,20,100:105])
+
     tex_factor,bdr_factor = l_weight
     balanced_w = 1.1
     label = label.float()
@@ -86,12 +85,11 @@ def cats_loss(prediction, label, l_weight=[0.,0.], device='cpu'):
         mask[mask == 0] = balanced_w * (1 - beta)
         mask[mask == 2] = 0
     prediction = torch.sigmoid(prediction)
-    # print('bce')
+
     cost = torch.nn.functional.binary_cross_entropy(
         prediction.float(), label.float(), weight=mask, reduction='none')
     cost = torch.sum(cost.float().mean((1, 2, 3)))  # by me
     label_w = (label != 0).float()
-    # print('tex')
     textcost = textureloss(prediction.float(), label_w.float(), mask_radius=4, device=device)
     bdrcost = bdrloss(prediction.float(), label_w.float(), radius=4, device=device)
 
