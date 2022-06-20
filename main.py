@@ -10,6 +10,7 @@ import numpy as np
 import torch
 import torch.optim as optim
 from torch.utils.data import DataLoader
+from thop import profile
 
 from dataset import DATASET_NAMES, BipedDataset, TestDataset, dataset_info
 # from loss import *
@@ -104,7 +105,6 @@ def train_one_epoch(epoch, dataloader, model, criterions, optimizer, device,
     loss_avg = np.array(loss_avg).mean()
     return loss_avg
 
-
 def validate_one_epoch(epoch, dataloader, model, device, output_dir, arg=None):
     # XXX This is not really validation, but testing
 
@@ -145,6 +145,15 @@ def test(checkpoint_path, dataloader, model, device, output_dir, args):
             image_shape = sample_batched['image_shape']
 
             print(f"{file_names}: {images.shape}")
+            # if batch_id==0:
+            #     mac,param = profile(model,inputs=(images,))
+            #     end = time.perf_counter()
+            #     if device.type == 'cuda':
+            #         torch.cuda.synchronize()
+            #     preds = model(images)
+            #     if device.type == 'cuda':
+            #         torch.cuda.synchronize()
+            # else:
             end = time.perf_counter()
             if device.type == 'cuda':
                 torch.cuda.synchronize()
@@ -209,7 +218,7 @@ def parse_args():
     parser = argparse.ArgumentParser(description='DexiNed trainer.')
     parser.add_argument('--choose_test_data',
                         type=int,
-                        default=0,
+                        default=-1,
                         help='Already set the dataset for testing choice: 0 - 8')
     # ----------- test -------0--
 
@@ -262,7 +271,7 @@ def parse_args():
                         help='Script in testing mode.')
     parser.add_argument('--double_img',
                         type=bool,
-                        default=True,
+                        default=False,
                         help='True: use same 2 imgs changing channels')  # Just for test
     parser.add_argument('--resume',
                         type=bool,
