@@ -215,11 +215,11 @@ def testPich(checkpoint_path, dataloader, model, device, output_dir, args):
 
 def parse_args():
     """Parse command line arguments."""
-    parser = argparse.ArgumentParser(description='DexiNed trainer.')
+    parser = argparse.ArgumentParser(description='LDC trainer.')
     parser.add_argument('--choose_test_data',
                         type=int,
-                        default=-1,
-                        help='Already set the dataset for testing choice: 0 - 8')
+                        default=0,
+                        help='Choose a dataset for testing: 0 - 8')
     # ----------- test -------0--
 
 
@@ -230,10 +230,9 @@ def parse_args():
 
     # Training settings
     # BIPED-B2=1, BIPDE-B3=2, just for evaluation, using LDC trained with 2 or 3 bloacks
-    TRAIN_DATA = DATASET_NAMES[0] # BIPED=0, BRIND=4, MDBD=8
+    TRAIN_DATA = DATASET_NAMES[0] # BIPED=0, BRIND=6, MDBD=10
     train_inf = dataset_info(TRAIN_DATA, is_linux=IS_LINUX)
     train_dir = train_inf['data_dir']
-
 
     # Data parameters
     parser.add_argument('--input_dir',
@@ -280,7 +279,7 @@ def parse_args():
     parser.add_argument('--checkpoint_data',
                         type=str,
                         default='16/16_model.pth',# 37 for biped 60 MDBD
-                        help='Checkpoint path from which to restore model weights from.')
+                        help='Checkpoint path.')
     parser.add_argument('--test_img_width',
                         type=int,
                         default=test_inf['img_width'],
@@ -300,7 +299,7 @@ def parse_args():
 
     parser.add_argument('--epochs',
                         type=int,
-                        default=31,
+                        default=25,
                         metavar='N',
                         help='Number of training epochs (default: 25).')
     parser.add_argument('--lr', default=5e-5, type=float,
@@ -312,7 +311,7 @@ def parse_args():
     parser.add_argument('--adjust_lr', default=[6,12,18], type=int,
                         help='Learning rate step size.')  # [6,9,19]
     parser.add_argument('--version_notes',
-                        default='LDC-BIPED RGB mean B4 Exp 67L3 xavier init normal+ init normal bdcnLoss2+CatsLoss2 Cofusion',
+                        default='LDC-BIPED: B4 Exp 67L3 xavier init normal+ init normal CatsLoss2 Cofusion',
                         type=str,
                         help='version notes')
     parser.add_argument('--batch_size',
@@ -349,10 +348,8 @@ def parse_args():
     parser.add_argument('--mean_pixel_values',
                         default=[103.939,116.779,123.68,137.86],
                         type=float)  # [103.939,116.779,123.68,137.86] [104.00699, 116.66877, 122.67892]
-    # test on other datasts>  [96.939,117.779,119.68, 137.86]
     # BRIND mean = [104.007, 116.669, 122.679, 137.86]
     # BIPED mean_bgr processed [160.913,160.275,162.239,137.86]
-    # fixed BIDEP mean [132.423,138.527, 142.959, 137.86]
     args = parser.parse_args()
     return args
 
@@ -428,7 +425,7 @@ def main(args):
         output_dir = os.path.join(args.res_dir, args.train_data+"2"+ args.test_data)
         print(f"output_dir: {output_dir}")
         if args.double_img:
-            # predict twice an image changing channels, then mix those results
+            # run twice the same image changing the image's channels
             testPich(checkpoint_path, dataloader_val, model, device, output_dir, args)
         else:
             test(checkpoint_path, dataloader_val, model, device, output_dir, args)
@@ -436,7 +433,7 @@ def main(args):
         # Count parameters:
         num_param = count_parameters(model)
         print('-------------------------------------------------------')
-        print('Number of parameters of current DexiNed model:')
+        print('LDC parameters:')
         print(num_param)
         print('-------------------------------------------------------')
         return
@@ -447,19 +444,17 @@ def main(args):
     optimizer = optim.Adam(model.parameters(),
                            lr=args.lr,
                            weight_decay=args.wd)
-    # lr_schd = lr_scheduler.StepLR(optimizer, step_size=args.lr_stepsize,
-    #                               gamma=args.lr_gamma)
+
     # Count parameters:
     num_param = count_parameters(model)
     print('-------------------------------------------------------')
-    print('Number of parameters of current DexiNed model:')
+    print('LDC parameters:')
     print(num_param)
     print('-------------------------------------------------------')
 
     # Main training loop
     seed=1021
     adjust_lr = args.adjust_lr
-    lr2= args.lr
     k=0
     set_lr = args.lrs#[25e-4, 5e-6]
     for epoch in range(ini_epoch,args.epochs):
@@ -473,12 +468,9 @@ def main(args):
         # adjust learning rate
         if adjust_lr is not None:
             if epoch in adjust_lr:
-                # lr2 = lr2*0.1 # before product 0.1 later product by 2
-                lr2 = set_lr[k]# before product 0.1 later product by 2
-                # wd2 = set_wd[k]
+                lr2 = set_lr[k]
                 for param_group in optimizer.param_groups:
                     param_group['lr'] = lr2
-                    # param_group['weight_decay'] = wd2
                 k+=1
         # Create output directories
 
@@ -508,11 +500,11 @@ def main(args):
             tb_writer.add_scalar('loss',
                                  avg_loss,
                                  epoch+1)
-        print('Current learning rate> ', optimizer.param_groups[0]['lr'])
+        print('Last learning rate> ', optimizer.param_groups[0]['lr'])
 
     num_param = count_parameters(model)
     print('-------------------------------------------------------')
-    print('Number of parameters of current DexiNed model:')
+    print('LDC parameters:')
     print(num_param)
     print('-------------------------------------------------------')
 

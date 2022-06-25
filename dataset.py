@@ -14,11 +14,11 @@ DATASET_NAMES = [
     'BIPED-B5',
     'BIPED-B6',
     'BSDS',
-    'BRIND',
+    'BRIND', # 6
     'BSDS300',
     'CID',
     'DCD',
-    'MDBD', #5
+    'MDBD', #10
     'PASCAL',
     'NYUD',
     'CLASSIC'
@@ -141,6 +141,15 @@ def dataset_info(dataset_name, is_linux=True):
                      'test_list': 'test_pair.lst',
                      'data_dir': 'C:/Users/xavysp/dataset/BSDS',  # mean_rgb
                      'yita': 0.5},
+            'BRIND': {
+                'img_height': 512,  # 321
+                'img_width': 512,  # 481
+                'train_list': 'train_pair2.lst',
+                'test_list': 'test_pair.lst',
+                'data_dir': 'C:/Users/xavysp/dataset/BRIND',  # mean_rgb
+                'yita': 0.5
+            },
+
             'BSDS300': {'img_height': 512,  # 321
                         'img_width': 512,  # 481
                         'test_list': 'test_pair.lst',
@@ -470,7 +479,7 @@ class BipedDataset(Dataset):
         if len(gt.shape) == 3:
             gt = gt[:, :, 0]
 
-        gt /= 255.  # for DexiNed input and BDCN
+        gt /= 255.  # for LDC input and BDCN
 
         img = np.array(img, dtype=np.float32)
         img -= self.mean_bgr
