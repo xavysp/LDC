@@ -13,7 +13,6 @@ check the results below.
 * [Python >= 3.7](https://www.python.org/downloads/release/python-370/g)
 * [Pytorch >=1.6](https://pytorch.org/)
 * [OpenCV](https://pypi.org/project/opencv-python/)
-* [Matplotlib](https://matplotlib.org/3.1.1/users/installing.html)
 * [Kornia](https://kornia.github.io/)
 * Other package like Numpy, h5py, PIL, json. 
 
@@ -27,13 +26,13 @@ Once the packages are installed,  clone this repo as follow:
 
 ```
 ├── data                        # Sample images for testing (paste your image here)
-|   ├── (Some images            # Images to test LDC
+|   ├── (Some images)           # Images to test LDC
 ├── img                         # Images used in README.md
 |   └── banner.png              # LDC banner
 ├── utls                        # A series of tools used in this repo
 |   └── img_processing.py       # Miscellaneous tool functions
 ├── datasets.py                 # Tools for dataset managing 
-├── losses2.py                   # Loss function used to train DexiNed (BDCNloss2)
+├── losses2.py                  # Loss function used to train DexiNed (BDCNloss2)
 ├── main.py                     # The main python file with main functions and parameter settings
                                 # here you can test and train
 ├── modelB4.py                  # LDC (4 blocks) class in pythorch
@@ -43,7 +42,7 @@ Once the packages are installed,  clone this repo as follow:
 ## Test
 
 In dataset.py you will find most of the dataset used in edge, contour, and boundary detection.
-If you have you own dataset copy and paste in data folder and run the code bellow
+If you have your own dataset copy and paste in data folder and run the code bellow
     
     python main.py --choose_test_data==-1
 
@@ -75,8 +74,7 @@ volume = {10},
 issn = {},
 pages = {1912-1921},
 keywords = {image edge detection;convolution;training;feeds;machine learning;task analysis;kernel},
-doi = {10.1109/WACV45572.2020.9093290},
-url = {https://doi.ieeecomputersociety.org/10.1109/WACV45572.2020.9093290},
+doi = {10.1109/ACCESS.2022.3186344},
 publisher = {IEEE Access},
 address = {Los Alamitos, CA, USA},
 month = {Jun}
