@@ -1,4 +1,4 @@
-# LDC: Lightweight Dense CNN for Edge Detection
+# LDC: Lightweight Dense CNN for Edge Detection (In construction)
 With the same purpose and features as [DexiNed](https://github.com/xavysp/DexiNed), LDC is a straightforward CNN based model
 for edge detection. LDC has just ~0.7M parameters, it can reduce your time of training and testing. This model is trained
 only on datasets prepared for edge detection [BIPED](https://www.kaggle.com/datasets/xavysp/biped), 
