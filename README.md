@@ -1,9 +1,11 @@
 # LDC: Lightweight Dense CNN for Edge Detection
 With the same purpose and features as [DexiNed](https://github.com/xavysp/DexiNed), LDC is a straightforward CNN based model
 for edge detection. LDC has just ~0.7M parameters, it can reduce your time of training and testing. This model is trained
-only in on datasets prepared for edge detection. Before using this repo, we highly recommend read our paper in 
-[LDC: Lightweight Dense CNN for Edge Detection](http://refbase.cidis.espol.edu.ec/show.php?record=183&submit=Cite&citeType=PDF).
-check the results below.
+only on datasets prepared for edge detection [BIPED](https://www.kaggle.com/datasets/xavysp/biped), 
+[MDBD](https://paperswithcode.com/sota/edge-detection-on-mdbd), and 
+[BRIND](https://github.com/MengyangPu/RINDNet). Before using this repo, we highly recommend read our paper in 
+[LDC: Lightweight Dense CNN for Edge Detection](https://ieeexplore.ieee.org/document/9807316).
+Check the results below.
 
 <div style="text-align:center"><img src='imgs/banner.png' width=800>
 </div>
@@ -66,17 +68,13 @@ If you like LDC, why not starring the project on GitHub!
 
 Please cite our paper if you find helpful in your academic/scientific publication,
 ```
-@article{xsoria2022ldc,
-author = {X. Soria and W. Pomboza-junez and A. Sappa},
-title = {LDC: Lightweight Dense CNN for Edge Detection},
-year = {2022},
-volume = {10},
-issn = {},
-pages = {1912-1921},
-keywords = {image edge detection;convolution;training;feeds;machine learning;task analysis;kernel},
-doi = {10.1109/ACCESS.2022.3186344},
-publisher = {IEEE Access},
-address = {Los Alamitos, CA, USA},
-month = {Jun}
-}
+@ARTICLE{xsoria2022ldc,
+  author={Soria, Xavier and Pomboza-Junez, Gonzalo and Sappa, Angel},
+  journal={IEEE Access}, 
+  title={LDC: Lightweight Dense CNN for Edge Detection}, 
+  year={2022},
+  volume={},
+  number={},
+  pages={1-1},
+  doi={10.1109/ACCESS.2022.3186344}}
 ```
