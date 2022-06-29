@@ -46,7 +46,7 @@ Once the packages are installed,  clone this repo as follow:
 In dataset.py you will find most of the dataset used in edge, contour, and boundary detection.
 If you have your own dataset copy and paste in data folder and run the code bellow
     
-    python main.py --choose_test_data==-1
+    python main.py --choose_test_data=-1
 
 ## Train
 
