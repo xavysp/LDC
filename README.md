@@ -69,12 +69,12 @@ If you like LDC, why not starring the project on GitHub!
 Please cite our paper if you find helpful in your academic/scientific publication,
 ```
 @ARTICLE{xsoria2022ldc,
-  author={Soria, Xavier and Pomboza-Junez, Gonzalo and Sappa, Angel},
+  author={Soria, Xavier and Pomboza-Junez, Gonzalo and Sappa, Angel Domingo},
   journal={IEEE Access}, 
   title={LDC: Lightweight Dense CNN for Edge Detection}, 
   year={2022},
-  volume={},
+  volume={10},
   number={},
-  pages={1-1},
+  pages={68281-68290},
   doi={10.1109/ACCESS.2022.3186344}}
 ```
