@@ -1,3 +1,6 @@
+[![PWC](https://img.shields.io/endpoint.svg?url=https://paperswithcode.com/badge/ldc-lightweight-dense-cnn-for-edge-detection/edge-detection-on-brind)](https://paperswithcode.com/sota/edge-detection-on-brind?p=ldc-lightweight-dense-cnn-for-edge-detection) 
+[![PWC](https://img.shields.io/endpoint.svg?url=https://paperswithcode.com/badge/ldc-lightweight-dense-cnn-for-edge-detection/edge-detection-on-biped-1)](https://paperswithcode.com/sota/edge-detection-on-biped-1?p=ldc-lightweight-dense-cnn-for-edge-detection)
+
 # LDC: Lightweight Dense CNN for Edge Detection (In construction)
 With the same purpose and features as [DexiNed](https://github.com/xavysp/DexiNed), LDC is a straightforward CNN based model
 for edge detection. LDC has just ~0.7M parameters, it can reduce your time of training and testing. This model is trained
