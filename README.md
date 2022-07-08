@@ -13,6 +13,8 @@ Check the results below.
 <div style="text-align:center"><img src='imgs/banner.png' width=800>
 </div>
 
+Check the banner in [HR](https://docs.google.com/drawings/d/1xyBniUToGqtgXrrgE7qckrkARkmgHuw945NfgsGjS9s/edit?usp=sharing)
+
 ## Requirements
 
 * [Python >= 3.7](https://www.python.org/downloads/release/python-370/g)
