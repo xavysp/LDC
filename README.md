@@ -6,7 +6,9 @@ With the same purpose and features as [DexiNed](https://github.com/xavysp/DexiNe
 for edge detection. LDC has just ~0.7M parameters, it can reduce your time of training and testing. This model is trained
 only on datasets prepared for edge detection [BIPED](https://www.kaggle.com/datasets/xavysp/biped), 
 [MDBD](https://paperswithcode.com/sota/edge-detection-on-mdbd), and 
-[BRIND](https://github.com/MengyangPu/RINDNet). Before using this repo, we highly recommend read our paper in 
+[RINDNet](https://github.com/MengyangPu/RINDNet)---we have prepared this dataset here
+[BRIND](https://github.com/xavysp/BRIND).
+Before using this repo, we highly recommend read our paper in 
 [LDC: Lightweight Dense CNN for Edge Detection](https://ieeexplore.ieee.org/document/9807316).
 Check the results below.
 

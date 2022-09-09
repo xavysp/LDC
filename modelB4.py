@@ -4,7 +4,6 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-
 def weight_init(m):
     if isinstance(m, (nn.Conv2d,)):
         torch.nn.init.xavier_normal_(m.weight, gain=1.0)
@@ -22,7 +21,6 @@ def weight_init(m):
             torch.nn.init.normal_(m.weight, std=0.1)
         if m.bias is not None:
             torch.nn.init.zeros_(m.bias)
-
 
 class CoFusion(nn.Module):
 
@@ -61,7 +59,6 @@ class _DenseLayer(nn.Sequential):
 
         return 0.5 * (new_features + x2), x2
 
-
 class _DenseBlock(nn.Sequential):
     def __init__(self, num_layers, input_features, out_features):
         super(_DenseBlock, self).__init__()
@@ -69,7 +66,6 @@ class _DenseBlock(nn.Sequential):
             layer = _DenseLayer(input_features, out_features)
             self.add_module('denselayer%d' % (i + 1), layer)
             input_features = out_features
-
 
 class UpConvBlock(nn.Module):
     def __init__(self, in_features, up_scale):
@@ -101,7 +97,6 @@ class UpConvBlock(nn.Module):
     def forward(self, x):
         return self.features(x)
 
-
 class SingleConvBlock(nn.Module):
     def __init__(self, in_features, out_features, stride,
                  use_bs=True
@@ -117,7 +112,6 @@ class SingleConvBlock(nn.Module):
         if self.use_bn:
             x = self.bn(x)
         return x
-
 
 class DoubleConvBlock(nn.Module):
     def __init__(self, in_features, mid_features,
@@ -145,7 +139,6 @@ class DoubleConvBlock(nn.Module):
         if self.use_act:
             x = self.relu(x)
         return x
-
 
 class LDC(nn.Module):
     """ Definition of the DXtrem network. """
