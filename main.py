@@ -230,7 +230,7 @@ def parse_args():
 
     # Training settings
     # BIPED-B2=1, BIPDE-B3=2, just for evaluation, using LDC trained with 2 or 3 bloacks
-    TRAIN_DATA = DATASET_NAMES[0] # BIPED=0, BRIND=6, MDBD=10
+    TRAIN_DATA = DATASET_NAMES[6] # BIPED=0, BRIND=6, MDBD=10
     train_inf = dataset_info(TRAIN_DATA, is_linux=IS_LINUX)
     train_dir = train_inf['data_dir']
 
@@ -329,7 +329,7 @@ def parse_args():
     parser.add_argument('--img_width',
                         type=int,
                         default=352,
-                        help='Image width for training.') # BIPED 400 BSDS 352/320 MDBD 480
+                        help='Image width for training.') # BIPED 352 BSDS 352/320 MDBD 480
     parser.add_argument('--img_height',
                         type=int,
                         default=352,

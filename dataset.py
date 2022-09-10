@@ -264,7 +264,7 @@ class TestDataset(Dataset):
                     f"Test list not provided for dataset: {self.test_data}")
 
             list_name = os.path.join(self.data_root, self.test_list)
-            if self.test_data.upper() == 'BIPED':
+            if self.test_data.upper() in ['BIPED', 'BRIND']:
 
                 with open(list_name) as f:
                     files = json.load(f)
