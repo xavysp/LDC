@@ -218,7 +218,7 @@ def parse_args():
     parser = argparse.ArgumentParser(description='LDC trainer.')
     parser.add_argument('--choose_test_data',
                         type=int,
-                        default=-1,
+                        default=-1, # uded 14
                         help='Choose a dataset for testing: 0 - 8')
     # ----------- test -------0--
 
@@ -226,11 +226,11 @@ def parse_args():
     TEST_DATA = DATASET_NAMES[parser.parse_args().choose_test_data] # max 8
     test_inf = dataset_info(TEST_DATA, is_linux=IS_LINUX)
     test_dir = test_inf['data_dir']
-    is_testing =True
+    is_testing =False
 
     # Training settings
     # BIPED-B2=1, BIPDE-B3=2, just for evaluation, using LDC trained with 2 or 3 bloacks
-    TRAIN_DATA = DATASET_NAMES[6] # BIPED=0, BRIND=6, MDBD=10
+    TRAIN_DATA = DATASET_NAMES[0] # BIPED=0, BRIND=6, MDBD=10
     train_inf = dataset_info(TRAIN_DATA, is_linux=IS_LINUX)
     train_dir = train_inf['data_dir']
 
@@ -268,6 +268,10 @@ def parse_args():
     parser.add_argument('--is_testing',type=bool,
                         default=is_testing,
                         help='Script in testing mode.')
+    parser.add_argument('--predict_all',
+                        type=bool,
+                        default=False,
+                        help='True: Generate all LDC outputs in all_edges ')
     parser.add_argument('--double_img',
                         type=bool,
                         default=False,
@@ -478,6 +482,13 @@ def main(args):
         img_test_dir = os.path.join(output_dir_epoch, args.test_data + '_res')
         os.makedirs(output_dir_epoch,exist_ok=True)
         os.makedirs(img_test_dir,exist_ok=True)
+
+        # validate_one_epoch(epoch,
+        #                    dataloader_val,
+        #                    model,
+        #                    device,
+        #                    img_test_dir,
+        #                    arg=args)
 
         avg_loss =train_one_epoch(epoch,dataloader_train,
                         model, criterion,

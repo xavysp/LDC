@@ -15,20 +15,52 @@ DATASET_NAMES = [
     'BIPED-B6',
     'BSDS',
     'BRIND', # 6
+    "ICEDA", # 7
     'BSDS300',
     'CID',
     'DCD',
     'MDBD', #10
     'PASCAL',
     'NYUD',
+    'BIPBRI',
+    'UDED',  # 14 just for testing
     'CLASSIC'
 ]  # 8
-
+BIPED_mean = [114.510, 114.451,117.230,137.86]
 
 def dataset_info(dataset_name, is_linux=True):
     if is_linux:
 
         config = {
+            'BIPBRI': {
+                'img_height': 512,  # 321
+                'img_width': 512,  # 481
+                'train_list': 'train_pair0.lst',
+                'train_list2': 'train_pair.lst',
+                'test_list': None,
+                'data_dir': '/root/workspace/datasets/BIPED',  # mean_rgb
+                'data_dir2': '/root/workspace/datasets/BRIND',  # mean_rgb
+                'yita': 0.5,
+                'mean': BIPED_mean
+            },
+            'UDED': {
+                'img_height': 512,  # 321
+                'img_width': 512,  # 481
+                'train_list': None,
+                'test_list': 'test_pair.lst',
+                'data_dir': '/root/workspace/datasets/UDED',  # mean_rgb
+                'yita': 0.5,
+                'mean': [104.007, 116.669, 122.679, 137.86]
+            },
+            'ICEDA': {
+            'img_height': 1024,  # 321
+            'img_width': 1408,  # 481
+            'train_list': None,
+            'test_list': 'test_pair.lst',
+            'data_dir': '/root/workspace/datasets/ICEDA',  # mean_rgb
+            'yita': 0.5,
+            'mean': [104.007, 116.669, 122.679, 137.86]
+        },
             'BSDS': {
                 'img_height': 512, #321
                 'img_width': 512, #481
@@ -136,6 +168,35 @@ def dataset_info(dataset_name, is_linux=True):
         }
     else:
         config = {
+            'BIPBRI': {
+                'img_height': 512,  # 321
+                'img_width': 512,  # 481
+                'train_list': 'train_pair.lst',
+                'train_list2': 'train_pair.lst',
+                'test_list': None,
+                'data_dir': 'C:/dataset/BIPED',  # mean_rgb
+                'data_dir2': 'C:/dataset/BRIND',  # mean_rgb
+                'yita': 0.5,
+                'mean': BIPED_mean
+            },
+            'UDED': {
+                'img_height': 512,  # 321
+                'img_width': 512,  # 481
+                'train_list': None,
+                'test_list': 'test_pair.lst',
+                'data_dir': 'C:/dataset/UDED',  # mean_rgb
+                'yita': 0.5,
+                'mean': [104.007, 116.669, 122.679, 137.86]
+            },
+            'ICEDA': {
+            'img_height': 1024,  # 321
+            'img_width': 1408,  # 481
+            'train_list': None,
+            'test_list': 'test_pair.lst',
+            'data_dir': 'C:/dataset/ICEDA',  # mean_rgb
+            'yita': 0.5,
+            'mean': [104.007, 116.669, 122.679, 137.86]
+        },
             'BSDS': {'img_height': 480,  # 321
                      'img_width': 480,  # 481
                      'test_list': 'test_pair.lst',
@@ -180,7 +241,7 @@ def dataset_info(dataset_name, is_linux=True):
                       'img_width': 1280,  # 1280
                       'test_list': 'test_pair.lst',
                       'train_list': 'train_rgb.lst',
-                      'data_dir': 'C:/Users/xavysp/dataset/BIPED',  # WIN: '../.../dataset/BIPED/edges'
+                      'data_dir': 'C:/dataset/BIPED',  # WIN: '../.../dataset/BIPED/edges'
                       'yita': 0.5},
             'BIPED-B2': {'img_height': 720,  # 720
                       'img_width': 1280,  # 1280
@@ -264,7 +325,7 @@ class TestDataset(Dataset):
                     f"Test list not provided for dataset: {self.test_data}")
 
             list_name = os.path.join(self.data_root, self.test_list)
-            if self.test_data.upper() in ['BIPED', 'BRIND']:
+            if self.test_data.upper() in ['BIPED', 'BRIND','UDED', 'ICEDA']:
 
                 with open(list_name) as f:
                     files = json.load(f)
@@ -338,21 +399,18 @@ class TestDataset(Dataset):
             gt = None
 
         # Make images and labels at least 512 by 512
-        elif img.shape[0] < 512 or img.shape[1] < 512:
+        if img.shape[0] < 512 or img.shape[1] < 512:
             img = cv2.resize(img, (self.args.test_img_width, self.args.test_img_height))  # 512
             gt = cv2.resize(gt, (self.args.test_img_width, self.args.test_img_height))  # 512
 
         # Make sure images and labels are divisible by 2^4=16
-        elif img.shape[0] % 16 != 0 or img.shape[1] % 16 != 0:
-            img_width = ((img.shape[1] // 16) + 1) * 16
-            img_height = ((img.shape[0] // 16) + 1) * 16
+        elif img.shape[0] % 8 != 0 or img.shape[1] % 8 != 0:
+            img_width = ((img.shape[1] // 8) + 1) * 8
+            img_height = ((img.shape[0] // 8) + 1) * 8
             img = cv2.resize(img, (img_width, img_height))
             gt = cv2.resize(gt, (img_width, img_height))
         else:
-            img_width = self.args.test_img_width
-            img_height = self.args.test_img_height
-            img = cv2.resize(img, (img_width, img_height))
-            gt = cv2.resize(gt, (img_width, img_height))
+            pass
         # # For FPS
         # img = cv2.resize(img, (496,320))
         # if self.yita is not None:
